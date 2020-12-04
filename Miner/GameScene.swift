@@ -30,18 +30,36 @@ class GameScene: SKScene {
             let touchedNode = atPoint(touchLocation)
             
             if touchedNode == up{
+                let deleteNode = atPoint(CGPoint(x: player.position.x, y: player.position.y + 100))
+                if deleteNode.name == "ground"{
+                    deleteNode.removeFromParent()
+                }
                 player.position.y = player.position.y + 100
             }
             
             if touchedNode == down{
+                let deleteNode = atPoint(CGPoint(x: player.position.x, y: player.position.y - 100))
+                if deleteNode.name == "ground"{
+                    deleteNode.removeFromParent()
+                }
+                
                 player.position.y = player.position.y - 100
             }
             
             if touchedNode == left{
+                let deleteNode = atPoint(CGPoint(x: player.position.x - 100, y: player.position.y))
+                if deleteNode.name == "ground"{
+                    deleteNode.removeFromParent()
+                }
+                
                 player.position.x = player.position.x - 100
             }
             
             if touchedNode == right{
+                let deleteNode = atPoint(CGPoint(x: player.position.x + 100, y: player.position.y))
+                if deleteNode.name == "ground"{
+                    deleteNode.removeFromParent()
+                }
                 player.position.x = player.position.x + 100
             }
         }
@@ -56,6 +74,7 @@ class GameScene: SKScene {
                 currentBlock.size = CGSize(width: 100, height: 100)
                 currentBlock.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m)
                 currentBlock.zPosition = 0
+                currentBlock.name = "ground"
                 self.addChild(currentBlock)
             
                 undergroundRow.append(currentBlock)
@@ -69,11 +88,15 @@ class GameScene: SKScene {
         player.zPosition = 1
         down.position = CGPoint(x: 200, y: 200)
         down.zPosition = 2
+        down.alpha = 0.5
         up.position = CGPoint(x: 200, y: 300)
         up.zPosition = 2
+        up.alpha = 0.5
         left.position = CGPoint(x: 100, y: 200)
         left.zPosition = 2
+        left.alpha = 0.5
         right.position = CGPoint(x: 300, y: 200)
+        right.alpha = 0.5
         right.zPosition = 2
         
         self.addChild(player)
