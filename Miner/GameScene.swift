@@ -16,6 +16,7 @@ var player = SKSpriteNode(imageNamed:"miner")
 var moneyLabel = SKLabelNode(fontNamed: "Avenir-Black")
 var playerState = Player(money: 0 , digSpeed: 3.0, startDigCost: 250)
 var underground = [[SKSpriteNode]]()
+var level = 1
 
 class GameScene: SKScene {
 
@@ -23,7 +24,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         
         spawnSprites()
-        generateEarth()
+        generateStart()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -54,6 +55,8 @@ class GameScene: SKScene {
                 self.childNode(withName: "digButton")?.alpha = 0
                 self.childNode(withName: "exit")?.alpha = 0
                 self.childNode(withName: "priceLabel")?.alpha = 0
+                
+                self.camera?.position = CGPoint(x: 0, y:-300)
             }
             
             if touchedNode == up{
@@ -90,14 +93,18 @@ class GameScene: SKScene {
         }
     }
     
-    func generateEarth(){
+    func generateStart(){
         var undergroundRow = [SKSpriteNode]()
-        for m in 0...9{
+        for m in -1...9{
             for n in -1...9{
                 var block: String
                 var currentBlock:SKSpriteNode
                 if n == -1 || n == 9{
                     block = "bounds"
+                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
+                }
+                else if m == -1{
+                    block = "next"
                     currentBlock = SKSpriteNode(imageNamed: "ERROR")
                 }
                 else{
@@ -119,6 +126,10 @@ class GameScene: SKScene {
             }
             underground.append(undergroundRow)
         }
+    }
+    
+    func generateLevel(level: Int){
+        
     }
     
     func weightedGen() -> String{
