@@ -30,36 +30,34 @@ class GameScene: SKScene {
             let touchedNode = atPoint(touchLocation)
             
             if touchedNode == up{
-                let deleteNode = atPoint(CGPoint(x: player.position.x, y: player.position.y + 100))
-                if deleteNode.name == "ground"{
-                    deleteNode.removeFromParent()
-                }
+                let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y + 100))
+                
+                dig(sprites: allNodes)
+                
                 player.position.y = player.position.y + 100
             }
             
             if touchedNode == down{
-                let deleteNode = atPoint(CGPoint(x: player.position.x, y: player.position.y - 100))
-                if deleteNode.name == "ground"{
-                    deleteNode.removeFromParent()
-                }
+                let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y - 100))
+                
+                dig(sprites: allNodes)
                 
                 player.position.y = player.position.y - 100
             }
             
             if touchedNode == left{
-                let deleteNode = atPoint(CGPoint(x: player.position.x - 100, y: player.position.y))
-                if deleteNode.name == "ground"{
-                    deleteNode.removeFromParent()
-                }
+                let allNodes = nodes(at: CGPoint(x: player.position.x - 100, y: player.position.y))
+                
+                dig(sprites: allNodes)
                 
                 player.position.x = player.position.x - 100
             }
             
             if touchedNode == right{
-                let deleteNode = atPoint(CGPoint(x: player.position.x + 100, y: player.position.y))
-                if deleteNode.name == "ground"{
-                    deleteNode.removeFromParent()
-                }
+                let allNodes = nodes(at: CGPoint(x: player.position.x + 100, y: player.position.y))
+                
+                dig(sprites: allNodes)
+                
                 player.position.x = player.position.x + 100
             }
         }
@@ -67,19 +65,45 @@ class GameScene: SKScene {
     
     func generateEarth(){
         var undergroundRow = [SKSpriteNode]()
-        
         for m in 0...9{
             for n in 0...8{
-                let currentBlock = SKSpriteNode(imageNamed: "dirt")
+                let block = weightedGen()
+                let currentBlock = SKSpriteNode(imageNamed: block)
+                let currentBG = SKSpriteNode(imageNamed: "stoneBG")
+                currentBlock.name = block
                 currentBlock.size = CGSize(width: 100, height: 100)
+                currentBG.size = CGSize(width: 100, height: 100)
                 currentBlock.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m)
+                currentBG.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m)
                 currentBlock.zPosition = 0
-                currentBlock.name = "ground"
+                currentBG.zPosition = -1
                 self.addChild(currentBlock)
+                self.addChild(currentBG)
             
                 undergroundRow.append(currentBlock)
             }
             underground.append(undergroundRow)
+        }
+    }
+    
+    func weightedGen() -> String{
+        let chance = Int.random(in: 1...100)
+        switch chance {
+        case 1...60:
+            return "stone"
+        case 61...70:
+            return "dirt"
+        case 71...80:
+            return "copper"
+        case 81...88:
+            return "silver"
+        case 89...96:
+            return "gold"
+        case 97...100:
+            return "platinum"
+        default:
+            print("error with random")
+            return "ERROR"
         }
     }
 
@@ -104,6 +128,17 @@ class GameScene: SKScene {
         self.addChild(up)
         self.addChild(left)
         self.addChild(right)
+    }
+    
+    func dig(sprites: [SKNode]){
+        let types = ["stone","dirt","copper","silver","gold","platinum"]
+        for sprite in sprites{
+            if let spriteName = sprite.name{
+                if types.contains(spriteName){
+                    sprite.removeFromParent()
+                }
+            }
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
