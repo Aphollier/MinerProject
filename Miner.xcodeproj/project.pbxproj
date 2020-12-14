@@ -17,6 +17,7 @@
 		749CBE5E25787A1F007C2BF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 749CBE5D25787A1F007C2BF7 /* Assets.xcassets */; };
 		749CBE6925787A1F007C2BF7 /* MinerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CBE6825787A1F007C2BF7 /* MinerTests.swift */; };
 		749CBE7425787A1F007C2BF7 /* MinerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CBE7325787A1F007C2BF7 /* MinerUITests.swift */; };
+		74F06C3325871A0100CAD4B0 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F06C3225871A0100CAD4B0 /* Player.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		749CBE6F25787A1F007C2BF7 /* MinerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		749CBE7325787A1F007C2BF7 /* MinerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinerUITests.swift; sourceTree = "<group>"; };
 		749CBE7525787A1F007C2BF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		74F06C3225871A0100CAD4B0 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				749CBE5A25787A1D007C2BF7 /* Main.storyboard */,
 				749CBE5D25787A1F007C2BF7 /* Assets.xcassets */,
 				749CBE5F25787A1F007C2BF7 /* Info.plist */,
+				74F06C3225871A0100CAD4B0 /* Player.swift */,
 			);
 			path = Miner;
 			sourceTree = "<group>";
@@ -266,6 +269,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74F06C3325871A0100CAD4B0 /* Player.swift in Sources */,
 				749CBE5725787A1D007C2BF7 /* GameScene.swift in Sources */,
 				749CBE5925787A1D007C2BF7 /* GameViewController.swift in Sources */,
 				749CBE5125787A1D007C2BF7 /* AppDelegate.swift in Sources */,

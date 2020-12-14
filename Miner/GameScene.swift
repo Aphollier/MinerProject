@@ -13,6 +13,8 @@ var left = SKSpriteNode(imageNamed:"left")
 var down = SKSpriteNode(imageNamed:"down")
 var right = SKSpriteNode(imageNamed:"right")
 var player = SKSpriteNode(imageNamed:"miner")
+var moneyLabel = SKLabelNode(fontNamed: "Avenir-Black")
+var playerState = Player(money: 0 , digSpeed: 3.0, startDigCost: 250)
 var underground = [[SKSpriteNode]]()
 
 class GameScene: SKScene {
@@ -29,36 +31,61 @@ class GameScene: SKScene {
             let touchLocation = touch.location(in: self)
             let touchedNode = atPoint(touchLocation)
             
+            if touchedNode.name == "store"{
+                self.childNode(withName: "storeOverlay")?.alpha = 1
+                self.childNode(withName: "storeLabel")?.alpha = 1
+                self.childNode(withName: "digLabel")?.alpha = 1
+                self.childNode(withName: "digButton")?.alpha = 1
+                self.childNode(withName: "exit")?.alpha = 1
+                self.childNode(withName: "priceLabel")?.alpha = 1
+            }
+            
+            if touchedNode.name == "digButton"{
+                playerState.buyDigUpgrade(label: moneyLabel)
+                if let pLabel = self.childNode(withName: "priceLabel") as? SKLabelNode{
+                    pLabel.text = "$\(playerState.startDigCost)"
+                }
+            }
+            
+            if touchedNode.name == "exit"{
+                self.childNode(withName: "storeOverlay")?.alpha = 0
+                self.childNode(withName: "storeLabel")?.alpha = 0
+                self.childNode(withName: "digLabel")?.alpha = 0
+                self.childNode(withName: "digButton")?.alpha = 0
+                self.childNode(withName: "exit")?.alpha = 0
+                self.childNode(withName: "priceLabel")?.alpha = 0
+            }
+            
             if touchedNode == up{
                 let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y + 100))
                 
-                dig(sprites: allNodes)
+                dig(sprites: allNodes){
+                    player.position.y = player.position.y + 100
+                }
                 
-                player.position.y = player.position.y + 100
             }
             
             if touchedNode == down{
                 let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y - 100))
                 
-                dig(sprites: allNodes)
-                
-                player.position.y = player.position.y - 100
+                dig(sprites: allNodes) {
+                    player.position.y = player.position.y - 100
+                }
             }
             
             if touchedNode == left{
                 let allNodes = nodes(at: CGPoint(x: player.position.x - 100, y: player.position.y))
-                
-                dig(sprites: allNodes)
-                
-                player.position.x = player.position.x - 100
+                dig(sprites: allNodes){
+                    player.position.x = player.position.x - 100
+
+                }
             }
             
             if touchedNode == right{
                 let allNodes = nodes(at: CGPoint(x: player.position.x + 100, y: player.position.y))
-                
-                dig(sprites: allNodes)
-                
-                player.position.x = player.position.x + 100
+                dig(sprites: allNodes){
+                    player.position.x = player.position.x + 100
+                }
             }
         }
     }
@@ -66,9 +93,17 @@ class GameScene: SKScene {
     func generateEarth(){
         var undergroundRow = [SKSpriteNode]()
         for m in 0...9{
-            for n in 0...8{
-                let block = weightedGen()
-                let currentBlock = SKSpriteNode(imageNamed: block)
+            for n in -1...9{
+                var block: String
+                var currentBlock:SKSpriteNode
+                if n == -1 || n == 9{
+                    block = "bounds"
+                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
+                }
+                else{
+                    block = weightedGen()
+                    currentBlock = SKSpriteNode(imageNamed: block)
+                }
                 let currentBG = SKSpriteNode(imageNamed: "stoneBG")
                 currentBlock.name = block
                 currentBlock.size = CGSize(width: 100, height: 100)
@@ -122,23 +157,59 @@ class GameScene: SKScene {
         right.position = CGPoint(x: 300, y: 200)
         right.alpha = 0.5
         right.zPosition = 2
+        moneyLabel.position = CGPoint(x: self.frame.size.width/2, y: 1200)
+        moneyLabel.zPosition = 6
+        moneyLabel.text = "$\(playerState.money)"
+        moneyLabel.fontColor = UIColor.black
+        if let pLabel = self.childNode(withName: "priceLabel") as? SKLabelNode{
+            pLabel.text = "$\(playerState.startDigCost)"
+        }
         
         self.addChild(player)
         self.addChild(down)
         self.addChild(up)
         self.addChild(left)
         self.addChild(right)
+        self.addChild(moneyLabel)
+        
     }
     
-    func dig(sprites: [SKNode]){
+    func dig(sprites: [SKNode], completed: @escaping () -> Void){
         let types = ["stone","dirt","copper","silver","gold","platinum"]
         for sprite in sprites{
             if let spriteName = sprite.name{
                 if types.contains(spriteName){
-                    sprite.removeFromParent()
+                    switch spriteName {
+                    case "stone":
+                        playerState.money += 5
+                    case "dirt":
+                        playerState.money += 1
+                    case "copper":
+                        playerState.money += 50
+                    case "silver":
+                        playerState.money += 100
+                    case "gold":
+                        playerState.money += 250
+                    case "platinum":
+                        playerState.money += 500
+                    default:
+                        print("error destroying ground")
+                    }
+                    isUserInteractionEnabled = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + playerState.digSpeed){
+                        sprite.removeFromParent()
+                        moneyLabel.text = ("$\(playerState.money)")
+                        completed()
+                    }
+                    isUserInteractionEnabled = true
+                    return
+                }
+                else if spriteName == "bounds"{
+                    return
                 }
             }
         }
+        completed()
     }
     
     override func update(_ currentTime: TimeInterval) {
