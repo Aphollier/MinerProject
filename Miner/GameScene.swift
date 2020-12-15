@@ -16,7 +16,8 @@ var player = SKSpriteNode(imageNamed:"miner")
 var moneyLabel = SKLabelNode(fontNamed: "Avenir-Black")
 var playerState = Player(money: 0 , digSpeed: 3.0, startDigCost: 250)
 var underground = [[SKSpriteNode]]()
-var level = 1
+var levelMax = 0
+var currentLevel = 0
 
 class GameScene: SKScene {
 
@@ -56,7 +57,6 @@ class GameScene: SKScene {
                 self.childNode(withName: "exit")?.alpha = 0
                 self.childNode(withName: "priceLabel")?.alpha = 0
                 
-                self.camera?.position = CGPoint(x: 0, y:-300)
             }
             
             if touchedNode == up{
@@ -96,16 +96,20 @@ class GameScene: SKScene {
     func generateStart(){
         var undergroundRow = [SKSpriteNode]()
         for m in -1...9{
-            for n in -1...9{
+            for n in -1...8{
                 var block: String
                 var currentBlock:SKSpriteNode
-                if n == -1 || n == 9{
+                if n == -1 || n == 8{
                     block = "bounds"
                     currentBlock = SKSpriteNode(imageNamed: "ERROR")
                 }
                 else if m == -1{
-                    block = "next"
+                    block = "level1"
                     currentBlock = SKSpriteNode(imageNamed: "ERROR")
+                }
+                else if m == 0{
+                    block = "buffer"
+                    currentBlock = SKSpriteNode(imageNamed: "buffer")
                 }
                 else{
                     block = weightedGen()
@@ -128,8 +132,45 @@ class GameScene: SKScene {
         }
     }
     
-    func generateLevel(level: Int){
-        
+    func generateLevel(){
+        levelMax += 1
+        let movement =  self.frame.height * CGFloat(-levelMax)
+        var undergroundRow = [SKSpriteNode]()
+        for m in -1...11{
+            for n in -1...8{
+                var block: String
+                var currentBlock:SKSpriteNode
+                if n == -1 || n == 8{
+                    block = "bounds"
+                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
+                }
+                else if m == -1{
+                    block = "level\(levelMax+1)"
+                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
+                }
+                else if m == 0 || m == 11{
+                    block = "buffer"
+                    currentBlock = SKSpriteNode(imageNamed: "buffer")
+                }
+                else{
+                    block = weightedGen()
+                    currentBlock = SKSpriteNode(imageNamed: block)
+                }
+                let currentBG = SKSpriteNode(imageNamed: "stoneBG")
+                currentBlock.name = block
+                currentBlock.size = CGSize(width: 100, height: 100)
+                currentBG.size = CGSize(width: 100, height: 100)
+                currentBlock.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m + Int(movement))
+                currentBG.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m + Int(movement))
+                currentBlock.zPosition = 0
+                currentBG.zPosition = -1
+                self.addChild(currentBlock)
+                self.addChild(currentBG)
+            
+                undergroundRow.append(currentBlock)
+            }
+            underground.append(undergroundRow)
+        }
     }
     
     func weightedGen() -> String{
@@ -218,9 +259,36 @@ class GameScene: SKScene {
                 else if spriteName == "bounds"{
                     return
                 }
+                else if spriteName.contains("level"){
+                    if(spriteName.contains("\(currentLevel)")){
+                        currentLevel -= 1
+                        self.anchorPoint = CGPoint(x: 0, y:currentLevel)
+                        reloadSprites()
+                        player.position.y = player.position.y + 133.33
+                        
+                    }
+                    else{
+                        currentLevel += 1
+                        self.anchorPoint = CGPoint(x: 0, y:currentLevel)
+                        reloadSprites()
+                        if currentLevel > levelMax{
+                            generateLevel()
+                        }
+                        
+                        player.position.y = player.position.y - 133.33
+                    }
+                }
             }
         }
         completed()
+    }
+    
+    func reloadSprites(){
+        down.position = CGPoint(x: 200, y: 200 + self.frame.height * CGFloat(-currentLevel))
+        up.position = CGPoint(x: 200, y: 300 + self.frame.height * CGFloat(-currentLevel))
+        left.position = CGPoint(x: 100, y: 200 + self.frame.height * CGFloat(-currentLevel))
+        right.position = CGPoint(x: 300, y: 200 + self.frame.height * CGFloat(-currentLevel))
+        moneyLabel.position = CGPoint(x: self.frame.size.width/2, y: 1200 + self.frame.height * CGFloat(-currentLevel))
     }
     
     override func update(_ currentTime: TimeInterval) {
