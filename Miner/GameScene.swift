@@ -252,8 +252,9 @@ class GameScene: SKScene {
                         sprite.removeFromParent()
                         moneyLabel.text = ("$\(playerState.money)")
                         completed()
+                        self.isUserInteractionEnabled = true
                     }
-                    isUserInteractionEnabled = true
+                    
                     return
                 }
                 else if spriteName == "bounds"{
