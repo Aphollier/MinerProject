@@ -7,25 +7,48 @@
 
 import SpriteKit
 
+//tilesize for worldgen Tiles
+let TILESIZE: Double = 75.0
+//Groundlevel for Player
+let GROUNDLEVEL: Double = 1055
 
-var up = SKSpriteNode(imageNamed:"up")
-var left = SKSpriteNode(imageNamed:"left")
-var down = SKSpriteNode(imageNamed:"down")
-var right = SKSpriteNode(imageNamed:"right")
-var player = SKSpriteNode(imageNamed:"miner")
-var moneyLabel = SKLabelNode(fontNamed: "Avenir-Black")
-var playerState = Player(money: 0 , digSpeed: 3.0, startDigCost: 250)
-var underground = [[SKSpriteNode]]()
-var levelMax = 0
-var currentLevel = 0
-
+// Driving class for the whole game.
+// controls the SKScene, only contains overriden functions,
+// extra functions are contained in other objects.
 class GameScene: SKScene {
-
+    //Control Pad Nodes
+    var up = SKSpriteNode(imageNamed:"up")
+    var left = SKSpriteNode(imageNamed:"left")
+    var down = SKSpriteNode(imageNamed:"down")
+    var right = SKSpriteNode(imageNamed:"right")
+    //Money and resource label
+    var resourceLabel = SKLabelNode(fontNamed: "Avenir-Black")
+    //Player Variables and functions
+    var playerState = Player(money: 0 ,digSpeed: 3.0, moveSpeed: 0.6, craftMultiplier: 1.0, startUpgradeCost: 250)
+    //World Generation Functions
+    var gen = Generation()
+    //Load Atlas Animations
+    var animations = Animate()
+    //Movement and controll functions
+    var controller = Controls()
+    //Misc World Functions
+    var worldFuncs = World()
+    //Continuous Animated Nodes
+    var player = SKSpriteNode()
+    var conveyor = SKSpriteNode()
+    var press = SKSpriteNode()
     
     override func didMove(to view: SKView) {
-        
-        spawnSprites()
-        generateStart()
+        //add textures for nodes
+        self.conveyor = self.childNode(withName: "conveyor") as! SKSpriteNode
+        self.press = self.childNode(withName: "press") as! SKSpriteNode
+        self.player = SKSpriteNode(texture: self.animations.frames["idle"]![0])
+        //add animations for nodes
+        self.conveyor.run(SKAction.repeatForever(self.animations.animations["conveyor"]!), withKey: "idleConveyor")
+        self.player.run(SKAction.repeatForever(self.animations.animations["idle"]!), withKey: "idleAnimation")
+        //generate world and spawn sprites
+        self.worldFuncs.spawnSprites(scene: self)
+        self.gen.generateStart(scene: self)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -33,263 +56,84 @@ class GameScene: SKScene {
             let touchLocation = touch.location(in: self)
             let touchedNode = atPoint(touchLocation)
             
-            if touchedNode.name == "store"{
-                self.childNode(withName: "storeOverlay")?.alpha = 1
-                self.childNode(withName: "storeLabel")?.alpha = 1
-                self.childNode(withName: "digLabel")?.alpha = 1
-                self.childNode(withName: "digButton")?.alpha = 1
-                self.childNode(withName: "exit")?.alpha = 1
-                self.childNode(withName: "priceLabel")?.alpha = 1
+            //if truck clicked on ground level go to store
+            if touchedNode.name == "truck"{
+                controller.goShop(scene: self)
             }
             
-            if touchedNode.name == "digButton"{
-                playerState.buyDigUpgrade(label: moneyLabel)
-                if let pLabel = self.childNode(withName: "priceLabel") as? SKLabelNode{
-                    pLabel.text = "$\(playerState.startDigCost)"
-                }
+            //if truck clicked at store go home
+            if touchedNode.name == "truckStore"{
+                controller.goHome(scene: self)
             }
             
-            if touchedNode.name == "exit"{
-                self.childNode(withName: "storeOverlay")?.alpha = 0
-                self.childNode(withName: "storeLabel")?.alpha = 0
-                self.childNode(withName: "digLabel")?.alpha = 0
-                self.childNode(withName: "digButton")?.alpha = 0
-                self.childNode(withName: "exit")?.alpha = 0
-                self.childNode(withName: "priceLabel")?.alpha = 0
-                
-            }
-            
-            if touchedNode == up{
-                let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y + 100))
-                
-                dig(sprites: allNodes){
-                    player.position.y = player.position.y + 100
-                }
-                
-            }
-            
-            if touchedNode == down{
-                let allNodes = nodes(at: CGPoint(x: player.position.x, y: player.position.y - 100))
-                
-                dig(sprites: allNodes) {
-                    player.position.y = player.position.y - 100
+            //buying pickaxe(digspeed) upgrade
+            if touchedNode.name == "pickaxeBuy"{
+                self.playerState.buyDigUpgrade()
+                if let pLabel = self.childNode(withName: "pickaxePrice") as? SKLabelNode{
+                    pLabel.text = "$\(self.playerState.upgradeCosts[0])"
+                    worldFuncs.reloadSprites(scene: self)
                 }
             }
             
-            if touchedNode == left{
-                let allNodes = nodes(at: CGPoint(x: player.position.x - 100, y: player.position.y))
-                dig(sprites: allNodes){
-                    player.position.x = player.position.x - 100
-
+            //buying boot(movespeed) upgrade
+            if touchedNode.name == "bootsBuy"{
+                self.playerState.buyBootUpgrade()
+                if let pLabel = self.childNode(withName: "bootsPrice") as? SKLabelNode{
+                    pLabel.text = "$\(self.playerState.upgradeCosts[1])"
+                    worldFuncs.reloadSprites(scene: self)
+                    self.animations.animations["walk"]!.duration = playerState.moveSpeed
+                    self.animations.animations["climb"]!.duration = playerState.moveSpeed
                 }
             }
             
-            if touchedNode == right{
-                let allNodes = nodes(at: CGPoint(x: player.position.x + 100, y: player.position.y))
-                dig(sprites: allNodes){
-                    player.position.x = player.position.x + 100
+            //buying crafting(money return) upgrade
+            if touchedNode.name == "craftBuy"{
+                self.playerState.buyCraftingUpgrade()
+                if let pLabel = self.childNode(withName: "craftPrice") as? SKLabelNode{
+                    pLabel.text = "$\(self.playerState.upgradeCosts[2])"
+                    worldFuncs.reloadSprites(scene: self)
+                    worldFuncs.updateMakeLabels(scene: self)
                 }
             }
-        }
-    }
-    
-    func generateStart(){
-        var undergroundRow = [SKSpriteNode]()
-        for m in -1...9{
-            for n in -1...8{
-                var block: String
-                var currentBlock:SKSpriteNode
-                if n == -1 || n == 8{
-                    block = "bounds"
-                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
-                }
-                else if m == -1{
-                    block = "level1"
-                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
-                }
-                else if m == 0{
-                    block = "buffer"
-                    currentBlock = SKSpriteNode(imageNamed: "buffer")
+            
+            //expand dropdown for resources
+            if touchedNode == self.resourceLabel{
+                if(self.resourceLabel.text == "$\(self.playerState.money)"){
+                    worldFuncs.expandResource(scene: self)
                 }
                 else{
-                    block = weightedGen()
-                    currentBlock = SKSpriteNode(imageNamed: block)
+                    self.resourceLabel.text = "$\(self.playerState.money)"
+                    self.resourceLabel.position = CGPoint(x: self.frame.size.width/20 + self.frame.width * CGFloat(self.gen.currentScreen) , y: self.frame.size.height * 0.9 + self.frame.height * CGFloat(-self.gen.currentLevel))
                 }
-                let currentBG = SKSpriteNode(imageNamed: "stoneBG")
-                currentBlock.name = block
-                currentBlock.size = CGSize(width: 100, height: 100)
-                currentBG.size = CGSize(width: 100, height: 100)
-                currentBlock.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m)
-                currentBG.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m)
-                currentBlock.zPosition = 0
-                currentBG.zPosition = -1
-                self.addChild(currentBlock)
-                self.addChild(currentBG)
+            }
             
-                undergroundRow.append(currentBlock)
+            //dig-move up
+            if touchedNode == self.up{
+                controller.moveUp(scene: self)
             }
-            underground.append(undergroundRow)
-        }
-    }
-    
-    func generateLevel(){
-        levelMax += 1
-        let movement =  self.frame.height * CGFloat(-levelMax)
-        var undergroundRow = [SKSpriteNode]()
-        for m in -1...11{
-            for n in -1...8{
-                var block: String
-                var currentBlock:SKSpriteNode
-                if n == -1 || n == 8{
-                    block = "bounds"
-                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
-                }
-                else if m == -1{
-                    block = "level\(levelMax+1)"
-                    currentBlock = SKSpriteNode(imageNamed: "ERROR")
-                }
-                else if m == 0 || m == 11{
-                    block = "buffer"
-                    currentBlock = SKSpriteNode(imageNamed: "buffer")
-                }
-                else{
-                    block = weightedGen()
-                    currentBlock = SKSpriteNode(imageNamed: block)
-                }
-                let currentBG = SKSpriteNode(imageNamed: "stoneBG")
-                currentBlock.name = block
-                currentBlock.size = CGSize(width: 100, height: 100)
-                currentBG.size = CGSize(width: 100, height: 100)
-                currentBlock.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m + Int(movement))
-                currentBG.position = CGPoint(x: 0 + 100*n, y: 100 + 100*m + Int(movement))
-                currentBlock.zPosition = 0
-                currentBG.zPosition = -1
-                self.addChild(currentBlock)
-                self.addChild(currentBG)
             
-                undergroundRow.append(currentBlock)
+            //dig-move down
+            if touchedNode == self.down{
+                controller.moveDown(scene: self)
             }
-            underground.append(undergroundRow)
-        }
-    }
-    
-    func weightedGen() -> String{
-        let chance = Int.random(in: 1...100)
-        switch chance {
-        case 1...60:
-            return "stone"
-        case 61...70:
-            return "dirt"
-        case 71...80:
-            return "copper"
-        case 81...88:
-            return "silver"
-        case 89...96:
-            return "gold"
-        case 97...100:
-            return "platinum"
-        default:
-            print("error with random")
-            return "ERROR"
-        }
-    }
-
-    func spawnSprites(){
-        player.position = CGPoint(x: 300, y: 1100)
-        player.zPosition = 1
-        down.position = CGPoint(x: 200, y: 200)
-        down.zPosition = 2
-        down.alpha = 0.5
-        up.position = CGPoint(x: 200, y: 300)
-        up.zPosition = 2
-        up.alpha = 0.5
-        left.position = CGPoint(x: 100, y: 200)
-        left.zPosition = 2
-        left.alpha = 0.5
-        right.position = CGPoint(x: 300, y: 200)
-        right.alpha = 0.5
-        right.zPosition = 2
-        moneyLabel.position = CGPoint(x: self.frame.size.width/2, y: 1200)
-        moneyLabel.zPosition = 6
-        moneyLabel.text = "$\(playerState.money)"
-        moneyLabel.fontColor = UIColor.black
-        if let pLabel = self.childNode(withName: "priceLabel") as? SKLabelNode{
-            pLabel.text = "$\(playerState.startDigCost)"
-        }
-        
-        self.addChild(player)
-        self.addChild(down)
-        self.addChild(up)
-        self.addChild(left)
-        self.addChild(right)
-        self.addChild(moneyLabel)
-        
-    }
-    
-    func dig(sprites: [SKNode], completed: @escaping () -> Void){
-        let types = ["stone","dirt","copper","silver","gold","platinum"]
-        for sprite in sprites{
-            if let spriteName = sprite.name{
-                if types.contains(spriteName){
-                    switch spriteName {
-                    case "stone":
-                        playerState.money += 5
-                    case "dirt":
-                        playerState.money += 1
-                    case "copper":
-                        playerState.money += 50
-                    case "silver":
-                        playerState.money += 100
-                    case "gold":
-                        playerState.money += 250
-                    case "platinum":
-                        playerState.money += 500
-                    default:
-                        print("error destroying ground")
-                    }
-                    isUserInteractionEnabled = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + playerState.digSpeed){
-                        sprite.removeFromParent()
-                        moneyLabel.text = ("$\(playerState.money)")
-                        completed()
-                        self.isUserInteractionEnabled = true
-                    }
-                    
-                    return
-                }
-                else if spriteName == "bounds"{
-                    return
-                }
-                else if spriteName.contains("level"){
-                    if(spriteName.contains("\(currentLevel)")){
-                        currentLevel -= 1
-                        self.anchorPoint = CGPoint(x: 0, y:currentLevel)
-                        reloadSprites()
-                        player.position.y = player.position.y + 133.33
-                        
-                    }
-                    else{
-                        currentLevel += 1
-                        self.anchorPoint = CGPoint(x: 0, y:currentLevel)
-                        reloadSprites()
-                        if currentLevel > levelMax{
-                            generateLevel()
-                        }
-                        
-                        player.position.y = player.position.y - 133.33
-                    }
+            
+            //dig-move left
+            if touchedNode == self.left{
+                controller.moveLeft(scene: self)
+            }
+            
+            //dig-move right
+            if touchedNode == self.right{
+                controller.moveRight(scene: self)
+            }
+            
+            //clicking make for any material (determined in function)
+            if let touchedNodeName = touchedNode.name{
+                if touchedNodeName.contains("Make"){
+                    worldFuncs.make(nodeName: touchedNode.name!, scene: self)
                 }
             }
         }
-        completed()
-    }
-    
-    func reloadSprites(){
-        down.position = CGPoint(x: 200, y: 200 + self.frame.height * CGFloat(-currentLevel))
-        up.position = CGPoint(x: 200, y: 300 + self.frame.height * CGFloat(-currentLevel))
-        left.position = CGPoint(x: 100, y: 200 + self.frame.height * CGFloat(-currentLevel))
-        right.position = CGPoint(x: 300, y: 200 + self.frame.height * CGFloat(-currentLevel))
-        moneyLabel.position = CGPoint(x: self.frame.size.width/2, y: 1200 + self.frame.height * CGFloat(-currentLevel))
     }
     
     override func update(_ currentTime: TimeInterval) {

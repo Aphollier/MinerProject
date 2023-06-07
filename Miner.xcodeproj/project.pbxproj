@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7431BB452578C7F800A34835 /* MinerTiles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7431BB442578C7F800A34835 /* MinerTiles.sks */; };
 		749CBE5125787A1D007C2BF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CBE5025787A1D007C2BF7 /* AppDelegate.swift */; };
 		749CBE5325787A1D007C2BF7 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 749CBE5225787A1D007C2BF7 /* GameScene.sks */; };
 		749CBE5525787A1D007C2BF7 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 749CBE5425787A1D007C2BF7 /* Actions.sks */; };
@@ -18,6 +17,20 @@
 		749CBE6925787A1F007C2BF7 /* MinerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CBE6825787A1F007C2BF7 /* MinerTests.swift */; };
 		749CBE7425787A1F007C2BF7 /* MinerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CBE7325787A1F007C2BF7 /* MinerUITests.swift */; };
 		74F06C3325871A0100CAD4B0 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F06C3225871A0100CAD4B0 /* Player.swift */; };
+		C0D5F7522A0F0F9E00551896 /* idle.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7512A0F0F9E00551896 /* idle.atlas */; };
+		C0D5F7592A12E09A00551896 /* climb.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7582A12E09A00551896 /* climb.atlas */; };
+		C0D5F75E2A12E36600551896 /* minedown.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F75A2A12E36600551896 /* minedown.atlas */; };
+		C0D5F75F2A12E36600551896 /* mine.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F75B2A12E36600551896 /* mine.atlas */; };
+		C0D5F7602A12E36600551896 /* walk.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F75C2A12E36600551896 /* walk.atlas */; };
+		C0D5F7612A12E36600551896 /* mineup.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F75D2A12E36600551896 /* mineup.atlas */; };
+		C0D5F7632A1D79A900551896 /* conveyor.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7622A1D79A900551896 /* conveyor.atlas */; };
+		C0D5F7672A1ED3B500551896 /* makeWalk.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7642A1ED3B400551896 /* makeWalk.atlas */; };
+		C0D5F7682A1ED3B500551896 /* stoneMake.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7652A1ED3B400551896 /* stoneMake.atlas */; };
+		C0D5F7692A1ED3B500551896 /* dirtMake.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C0D5F7662A1ED3B400551896 /* dirtMake.atlas */; };
+		C0E295B52A2A9206001DD7CD /* Generation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E295B42A2A9206001DD7CD /* Generation.swift */; };
+		C0E295B72A2A9B18001DD7CD /* Animate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E295B62A2A9B18001DD7CD /* Animate.swift */; };
+		C0E295BD2A2FCD48001DD7CD /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E295BC2A2FCD48001DD7CD /* Controls.swift */; };
+		C0E295BF2A2FD0E1001DD7CD /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E295BE2A2FD0E1001DD7CD /* World.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +51,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7431BB442578C7F800A34835 /* MinerTiles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MinerTiles.sks; sourceTree = "<group>"; };
 		749CBE4D25787A1D007C2BF7 /* Miner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Miner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		749CBE5025787A1D007C2BF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		749CBE5225787A1D007C2BF7 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -55,6 +67,20 @@
 		749CBE7325787A1F007C2BF7 /* MinerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinerUITests.swift; sourceTree = "<group>"; };
 		749CBE7525787A1F007C2BF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		74F06C3225871A0100CAD4B0 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		C0D5F7512A0F0F9E00551896 /* idle.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = idle.atlas; sourceTree = "<group>"; };
+		C0D5F7582A12E09A00551896 /* climb.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = climb.atlas; sourceTree = "<group>"; };
+		C0D5F75A2A12E36600551896 /* minedown.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = minedown.atlas; sourceTree = "<group>"; };
+		C0D5F75B2A12E36600551896 /* mine.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = mine.atlas; sourceTree = "<group>"; };
+		C0D5F75C2A12E36600551896 /* walk.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = walk.atlas; sourceTree = "<group>"; };
+		C0D5F75D2A12E36600551896 /* mineup.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = mineup.atlas; sourceTree = "<group>"; };
+		C0D5F7622A1D79A900551896 /* conveyor.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = conveyor.atlas; sourceTree = "<group>"; };
+		C0D5F7642A1ED3B400551896 /* makeWalk.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = makeWalk.atlas; sourceTree = "<group>"; };
+		C0D5F7652A1ED3B400551896 /* stoneMake.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = stoneMake.atlas; sourceTree = "<group>"; };
+		C0D5F7662A1ED3B400551896 /* dirtMake.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = dirtMake.atlas; sourceTree = "<group>"; };
+		C0E295B42A2A9206001DD7CD /* Generation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Generation.swift; sourceTree = "<group>"; };
+		C0E295B62A2A9B18001DD7CD /* Animate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animate.swift; sourceTree = "<group>"; };
+		C0E295BC2A2FCD48001DD7CD /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		C0E295BE2A2FD0E1001DD7CD /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,16 +131,29 @@
 		749CBE4F25787A1D007C2BF7 /* Miner */ = {
 			isa = PBXGroup;
 			children = (
+				C0D5F7662A1ED3B400551896 /* dirtMake.atlas */,
+				C0D5F7642A1ED3B400551896 /* makeWalk.atlas */,
+				C0D5F7652A1ED3B400551896 /* stoneMake.atlas */,
+				C0D5F7622A1D79A900551896 /* conveyor.atlas */,
+				C0D5F75B2A12E36600551896 /* mine.atlas */,
+				C0D5F75A2A12E36600551896 /* minedown.atlas */,
+				C0D5F75D2A12E36600551896 /* mineup.atlas */,
+				C0D5F75C2A12E36600551896 /* walk.atlas */,
+				C0D5F7582A12E09A00551896 /* climb.atlas */,
 				749CBE5025787A1D007C2BF7 /* AppDelegate.swift */,
 				749CBE5225787A1D007C2BF7 /* GameScene.sks */,
-				7431BB442578C7F800A34835 /* MinerTiles.sks */,
 				749CBE5425787A1D007C2BF7 /* Actions.sks */,
 				749CBE5625787A1D007C2BF7 /* GameScene.swift */,
 				749CBE5825787A1D007C2BF7 /* GameViewController.swift */,
 				749CBE5A25787A1D007C2BF7 /* Main.storyboard */,
 				749CBE5D25787A1F007C2BF7 /* Assets.xcassets */,
 				749CBE5F25787A1F007C2BF7 /* Info.plist */,
+				C0D5F7512A0F0F9E00551896 /* idle.atlas */,
 				74F06C3225871A0100CAD4B0 /* Player.swift */,
+				C0E295B42A2A9206001DD7CD /* Generation.swift */,
+				C0E295B62A2A9B18001DD7CD /* Animate.swift */,
+				C0E295BC2A2FCD48001DD7CD /* Controls.swift */,
+				C0E295BE2A2FD0E1001DD7CD /* World.swift */,
 			);
 			path = Miner;
 			sourceTree = "<group>";
@@ -240,11 +279,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7431BB452578C7F800A34835 /* MinerTiles.sks in Resources */,
 				749CBE5C25787A1D007C2BF7 /* Main.storyboard in Resources */,
+				C0D5F75E2A12E36600551896 /* minedown.atlas in Resources */,
+				C0D5F7692A1ED3B500551896 /* dirtMake.atlas in Resources */,
+				C0D5F7592A12E09A00551896 /* climb.atlas in Resources */,
+				C0D5F7632A1D79A900551896 /* conveyor.atlas in Resources */,
 				749CBE5325787A1D007C2BF7 /* GameScene.sks in Resources */,
+				C0D5F75F2A12E36600551896 /* mine.atlas in Resources */,
+				C0D5F7522A0F0F9E00551896 /* idle.atlas in Resources */,
 				749CBE5E25787A1F007C2BF7 /* Assets.xcassets in Resources */,
+				C0D5F7602A12E36600551896 /* walk.atlas in Resources */,
+				C0D5F7682A1ED3B500551896 /* stoneMake.atlas in Resources */,
 				749CBE5525787A1D007C2BF7 /* Actions.sks in Resources */,
+				C0D5F7672A1ED3B500551896 /* makeWalk.atlas in Resources */,
+				C0D5F7612A12E36600551896 /* mineup.atlas in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,7 +320,11 @@
 				74F06C3325871A0100CAD4B0 /* Player.swift in Sources */,
 				749CBE5725787A1D007C2BF7 /* GameScene.swift in Sources */,
 				749CBE5925787A1D007C2BF7 /* GameViewController.swift in Sources */,
+				C0E295BD2A2FCD48001DD7CD /* Controls.swift in Sources */,
 				749CBE5125787A1D007C2BF7 /* AppDelegate.swift in Sources */,
+				C0E295B52A2A9206001DD7CD /* Generation.swift in Sources */,
+				C0E295BF2A2FD0E1001DD7CD /* World.swift in Sources */,
+				C0E295B72A2A9B18001DD7CD /* Animate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
